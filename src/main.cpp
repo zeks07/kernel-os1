@@ -1,13 +1,13 @@
+#include "../h/Kernel.hpp"
 #include "../h/memory/MemoryAllocator.hpp"
 
 
-#define DIRECT_MODE 0b00
-
+constexpr auto direct_mode = 0b00;
 
 extern "C" void trap_vector_base();
 
 auto init() -> void {
-  auto trap_vector_base_pointer = reinterpret_cast<uint64>(&trap_vector_base) | DIRECT_MODE;
+  auto trap_vector_base_pointer = reinterpret_cast<uint64>(&trap_vector_base) | direct_mode;
   __asm__ volatile ("csrw stvec, %0" : : "r"(trap_vector_base_pointer));
   MemoryAllocator::init();
 }
@@ -20,6 +20,8 @@ auto end() -> void {
 
 auto main() -> void {
   init();
+
+  Kernel::run();
 
   end();
 }

@@ -1,9 +1,13 @@
-.extern _ZN15MemoryAllocator9mem_allocEm        # MemoryAllocator::mem_alloc(size_t)
-.extern _ZN15MemoryAllocator8mem_freeEPv        # MemoryAllocator::mem_free(void*)
+.extern _ZN15MemoryAllocator9mem_allocEm                # MemoryAllocator::mem_alloc(size_t)
+.extern _ZN15MemoryAllocator8mem_freeEPv                # MemoryAllocator::mem_free(void*)
 
-.extern _ZN7Console6handleEv                    # Console::handle()
+.extern _ZN6thread13create_threadEPPNS_3TCBEPFvPvES3_   # thread::create_thread(thread::TCB**, void (*)(void*), void*)
+.extern _ZN6thread11exit_threadEv                       # thread::exit_thread()
+.extern _ZN6thread9Scheduler8dispatchEv                 # thread::Scheduler::dispatch()
 
-.extern _Z5errorv                               # error()
+.extern _ZN7Console6handleEv                            # Console::handle()
+
+.extern _Z5errorv                                       # error()
 
 .global trap_vector_base
 .type trap_vector_base @function
@@ -53,6 +57,15 @@ syscall_dispatch:
     li t0, 0x02
     beq a0, t0, mem_free
 
+    li t0, 0x11
+    beq a0, t0, thread_create
+
+    li t0, 0x12
+    beq a0, t0, thread_exit
+
+    li t0, 0x13
+    beq a0, t0, thread_dispatch
+
     j invalid_operator_code
 
 mem_alloc:
@@ -63,6 +76,21 @@ mem_alloc:
 mem_free:
     mv a0, a1   # void* ptr
     call _ZN15MemoryAllocator8mem_freeEPv
+    j syscall_done
+
+thread_create:
+    mv a0, a1   # PCB** handle
+    mv a1, a2   # void (* body_)(void *)
+    mv a2, a3   # void* arg
+    call _ZN6thread13create_threadEPPNS_3TCBEPFvPvES3_
+    j syscall_done
+
+thread_exit:
+    call _ZN6thread11exit_threadEv
+    j syscall_done
+
+thread_dispatch:
+    call _ZN6thread9Scheduler8dispatchEv
     j syscall_done
 
 invalid_operator_code:
