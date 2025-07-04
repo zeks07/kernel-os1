@@ -10,7 +10,6 @@ auto syscall(uint64 operation_code, uint64 arg0 = 0, uint64 arg1 = 0, uint64 arg
 }
 
 auto mem_alloc(const size_t size) -> void* {
-  // const uint64 number_of_blocks = (size + BLOCK_HEADER_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
   return reinterpret_cast<void*>(syscall(0x01, size));
 }
 

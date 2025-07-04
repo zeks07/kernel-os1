@@ -15,46 +15,45 @@ auto MemoryAllocator::init() -> void {
   block_header_list_head = new_block_header_at(heap_start, heap_size);
 }
 
-auto MemoryAllocator::mem_alloc(const size_t number_of_blocks) -> void* {
-  return __mem_alloc(number_of_blocks);
-  // if (!block_header_list_head || number_of_blocks <= 0) {
-  //   return nullptr;
-  // }
-  //
-  // const auto size = number_of_blocks * MEM_BLOCK_SIZE;
-  //
-  // auto current = block_header_list_head;
-  //
-  // while (current) {
-  //   if (!current->is_used && current->size >= size) break;
-  //   current = current->next;
-  // }
-  //
-  // if (!current) {
-  //   return nullptr;
-  // }
-  //
-  // if (current->size > size) {
-  //   auto* new_block_header = new_block_header_at(reinterpret_cast<char*>(current) + size, current->size - size);
-  //   current->link_to(new_block_header);
-  // }
-  //
-  // current->size = size;
-  // current->is_used = true;
-  //
-  // return reinterpret_cast<char*>(current) + BLOCK_HEADER_SIZE;
+auto MemoryAllocator::mem_alloc(const size_t size) -> void* {
+  const uint64 number_of_blocks = (size + BLOCK_HEADER_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
+  if (!block_header_list_head || number_of_blocks <= 0) {
+    return nullptr;
+  }
+
+  const auto actual_size = number_of_blocks * MEM_BLOCK_SIZE;
+
+  auto current = block_header_list_head;
+
+  while (current) {
+    if (!current->is_used && current->size >= actual_size) break;
+    current = current->next;
+  }
+
+  if (!current) {
+    return nullptr;
+  }
+
+  if (current->size > actual_size) {
+    auto* new_block_header = new_block_header_at(reinterpret_cast<char*>(current) + actual_size, current->size - actual_size);
+    current->link_to(new_block_header);
+  }
+
+  current->size = actual_size;
+  current->is_used = true;
+
+  return reinterpret_cast<char*>(current) + BLOCK_HEADER_SIZE;
 }
 
 auto MemoryAllocator::mem_free(void* ptr) -> int {
-  return __mem_free(ptr);
-  // if (!ptr) {
-  //   return -1;
-  // }
-  //
-  // auto* block = reinterpret_cast<BlockHeader*>(static_cast<char*>(ptr) - BLOCK_HEADER_SIZE);
-  // block->free();
-  //
-  // return 0;
+  if (!ptr) {
+    return -1;
+  }
+
+  auto* block = reinterpret_cast<BlockHeader*>(static_cast<char*>(ptr) - BLOCK_HEADER_SIZE);
+  block->free();
+
+  return 0;
 }
 
 auto MemoryAllocator::print_memory_usage() -> void {
