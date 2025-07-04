@@ -33,7 +33,7 @@ namespace struc {
       return *this;
     }
 
-    auto add(T& element) -> void {
+    auto add(const T& element) -> void {
       const auto new_node = new LinkedNode<T>(element);
       if (is_empty()) {
         front = back = new_node;
@@ -62,10 +62,11 @@ namespace struc {
         current = current->next_node();
       }
       new_node->link_before(current);
+      if (index == 0) front = new_node;
       size++;
     }
 
-    auto add_first(T& element) -> void {
+    auto add_first(const T& element) -> void {
       add(0, element);
     }
 
@@ -84,14 +85,14 @@ namespace struc {
         current = current->next_node();
       }
 
-      return current->value;
+      return current->get_value();
     }
 
-    auto first() -> T& {
+    auto first() const -> T& {
       return get(0);
     }
 
-    auto last() -> T& {
+    auto last() const -> T& {
       return get(size - 1);
     }
 

@@ -5,10 +5,10 @@
 #include "../h/thread/Scheduler.hpp"
 
 
-static volatile bool finishedA = false;
-static volatile bool finishedB = false;
+static volatile bool finished1 = false;
+static volatile bool finished2 = false;
 
-void thread_function1(void* arg) {
+auto thread_function1(void* arg) -> void {
   for (uint64 i = 0; i < 10; i++) {
     println("A: i=%d", i);
     for (uint64 j = 0; j < 10000; j++) {
@@ -17,29 +17,29 @@ void thread_function1(void* arg) {
     }
   }
   println("A finished!");
-  finishedA = true;
+  finished1 = true;
 }
 
 class WorkerB final : public Thread {
-  void workerBodyB(void* arg);
+  static auto thread_function2(void* arg) -> void;
 public:
-  WorkerB() {}
+  WorkerB() = default;
 
-  void run() override {
-    workerBodyB(nullptr);
+  auto run() -> void override {
+    thread_function2(nullptr);
   }
 };
 
-void WorkerB::workerBodyB(void *) {
+auto WorkerB::thread_function2(void*) -> void {
   for (uint64 i = 0; i < 16; i++) {
-    println("B: i=$d", i);
+    println("B: i=%d", i);
     for (uint64 j = 0; j < 10000; j++) {
       for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
       thread_dispatch();
     }
   }
   println("B finished!");
-  finishedB = true;
+  finished2 = true;
   thread_dispatch();
 }
 
@@ -59,11 +59,11 @@ auto Kernel::run() -> void {
   thread1.start();
   thread2.start();
 
-  while (!finishedA || !finishedB) {
+  while (finished1 == false || finished2 == false) {
     Thread::dispatch();
   }
 
-  delete thread::Scheduler::ready_queue;
-
   println("Main done.");
+
+  delete thread::Scheduler::ready_queue;
 }

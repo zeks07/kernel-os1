@@ -2,7 +2,9 @@
 #include "../lib/console.h"
 #include "../lib/hw.h"
 
-void error() {
+auto end() -> void;
+
+auto error() -> void {
   println("An error has occurred");
 
   uint64 status;
@@ -45,4 +47,5 @@ void error() {
   }
   println(")");
 
+  end();
 }

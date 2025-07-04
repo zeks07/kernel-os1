@@ -5,7 +5,7 @@ namespace struc {
   template <typename T>
   class Node {
   public:
-    explicit Node(T& value) : value(value) {
+    explicit Node(const T& value) : value(value) {
     }
 
     Node(const Node& other) : value(other.value) {
@@ -20,14 +20,18 @@ namespace struc {
       return value;
     }
 
+    auto get_value() const -> const T& {
+      return value;
+    }
+
   private:
-    T& value;
+    T value;
   };
 
   template <typename T>
   class LinkedNode : public Node<T> {
   public:
-    explicit LinkedNode(T& value) : Node<T>(value), next(nullptr), previous(nullptr) {
+    explicit LinkedNode(const T& value) : Node<T>(value), next(nullptr), previous(nullptr) {
     }
 
     auto link_after(LinkedNode* node) -> void {

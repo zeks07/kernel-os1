@@ -12,7 +12,7 @@ namespace thread {
 
   auto thread_wrapper() -> void;
 
-  auto switch_context(TCB* new_thread, TCB* old_thread) -> void;
+  auto switch_context(TCB* new_thread, TCB* old_thread) -> void;;
 
   class TCB {
   public:
@@ -22,6 +22,22 @@ namespace thread {
       uint64 ra;
       uint64 sp;
     };
+
+    TCB(int id, body body, void* arg, size_t stack_size);
+
+    // ReSharper disable once CppFunctionIsNotImplemented
+    auto save_context() -> void;
+    // ReSharper disable once CppFunctionIsNotImplemented
+    auto load_context() -> void;
+
+    auto get_id() const -> int;
+    auto get_state() const -> State;
+    auto finish() -> void;
+    auto is_finished() const -> bool;
+
+    auto run() const -> void;
+
+    ~TCB();
 
   private:
     int id;
@@ -34,20 +50,6 @@ namespace thread {
     Context context;
     size_t stack_size;
     void* stack;
-
-  public:
-    TCB(int id, body body, void* arg, size_t stack_size);
-
-    auto save_context() -> void;
-    auto load_context() -> void;
-
-    auto get_state() const -> State;
-    auto finish() -> void;
-    auto is_finished() const -> bool;
-
-    auto run() const -> void;
-
-    ~TCB();
   };
 }
 

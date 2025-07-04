@@ -30,7 +30,7 @@ auto thread::create_thread(TCB** handle, const body body, void* arg) -> int {
 auto thread::exit_thread() -> void {
   TCB* running_thread = Scheduler::get_running_thread();
   running_thread->finish();
-  Scheduler::dispatch();
+  thread_dispatch();
 }
 
 auto thread::thread_wrapper() -> void {
@@ -39,23 +39,29 @@ auto thread::thread_wrapper() -> void {
   const TCB* running_thread = Scheduler::get_running_thread();
   running_thread->run();
 
-  exit_thread();
+  thread_exit();
 }
 
 thread::TCB::TCB(const int id, const body body, void* arg, const size_t stack_size)
-  : id(id), state(Ready), thread_body(body), thread_arguments(arg), stack_size(stack_size) {
+  : id(id), state(Ready), thread_body(body), thread_arguments(arg) {
 
   if (body == nullptr) {
     stack = nullptr;
+    this->stack_size = 0;
     context = {0, 0};
     return;
   }
 
   stack = mem_alloc(stack_size);
+  this->stack_size = stack_size;
   context = {
     reinterpret_cast<uint64>(&thread_wrapper),
     reinterpret_cast<uint64>(stack) + stack_size - 1
   };
+}
+
+auto thread::TCB::get_id() const -> int {
+  return id;
 }
 
 auto thread::TCB::get_state() const -> State {

@@ -1,7 +1,6 @@
 #pragma once
 #include "../structure/List.hpp"
 
-
 class Kernel;
 
 namespace thread {

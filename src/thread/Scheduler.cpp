@@ -2,6 +2,7 @@
 
 #include "../../h/thread/TCB.hpp"
 
+
 auto thread::Scheduler::put_thread(TCB* thread) -> void {
   ready_queue->add(thread);
 }
@@ -26,5 +27,5 @@ auto thread::Scheduler::get_running_thread() -> TCB* {
   return running_thread;
 }
 
-struc::List<thread::TCB*>* thread::Scheduler::ready_queue = nullptr;
+struc::List<thread::TCB*>* thread::Scheduler::ready_queue;
 thread::TCB* thread::Scheduler::running_thread = nullptr;
