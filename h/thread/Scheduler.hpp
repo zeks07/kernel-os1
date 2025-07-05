@@ -8,13 +8,15 @@ namespace thread {
 
   class Scheduler {
   public:
+    static auto init(TCB* kernel_thread) -> void;
+
     static auto put_thread(TCB* thread) -> void;
     static auto get_thread() -> TCB*;
     static auto dispatch() -> void;
 
     static auto get_running_thread() -> TCB*;
 
-    friend Kernel;
+    static auto destructor() -> void;
 
   private:
     static struc::List<TCB*>* ready_queue;

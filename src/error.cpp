@@ -1,8 +1,7 @@
+#include "../h/Kernel.hpp"
 #include "../h/print/print.hpp"
-#include "../lib/console.h"
 #include "../lib/hw.h"
 
-auto end() -> void;
 
 auto error() -> void {
   println("An error has occurred");
@@ -47,5 +46,5 @@ auto error() -> void {
   }
   println(")");
 
-  end();
+  Kernel::force_shutdown();
 }

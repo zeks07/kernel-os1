@@ -2,6 +2,10 @@
 
 #include "../../h/thread/TCB.hpp"
 
+auto thread::Scheduler::init(TCB* kernel_thread) -> void {
+  ready_queue = new struc::List<TCB*>();
+  running_thread = kernel_thread;
+}
 
 auto thread::Scheduler::put_thread(TCB* thread) -> void {
   ready_queue->add(thread);
@@ -25,6 +29,10 @@ auto thread::Scheduler::dispatch() -> void {
 
 auto thread::Scheduler::get_running_thread() -> TCB* {
   return running_thread;
+}
+
+auto thread::Scheduler::destructor() -> void {
+  delete ready_queue;
 }
 
 struc::List<thread::TCB*>* thread::Scheduler::ready_queue;

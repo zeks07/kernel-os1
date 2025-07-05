@@ -1,69 +1,56 @@
 #include "../h/Kernel.hpp"
 
 #include "../h/syscall_cpp.hpp"
-#include "../h/print/print.hpp"
 #include "../h/thread/Scheduler.hpp"
+#include "../h/memory/MemoryAllocator.hpp"
 
 
-static volatile bool finished1 = false;
-static volatile bool finished2 = false;
+extern "C" void trap_vector_base();
 
-auto thread_function1(void* arg) -> void {
-  for (uint64 i = 0; i < 10; i++) {
-    println("A: i=%d", i);
-    for (uint64 j = 0; j < 10000; j++) {
-      for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
-      thread_dispatch();
-    }
-  }
-  println("A finished!");
-  finished1 = true;
+extern auto userMain() -> void;
+
+namespace {
+  constexpr auto direct_mode = 0b00;
 }
 
-class WorkerB final : public Thread {
-  static auto thread_function2(void* arg) -> void;
-public:
-  WorkerB() = default;
+bool volatile finished = false;
 
-  auto run() -> void override {
-    thread_function2(nullptr);
-  }
-};
-
-auto WorkerB::thread_function2(void*) -> void {
-  for (uint64 i = 0; i < 16; i++) {
-    println("B: i=%d", i);
-    for (uint64 j = 0; j < 10000; j++) {
-      for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
-      thread_dispatch();
-    }
-  }
-  println("B finished!");
-  finished2 = true;
-  thread_dispatch();
+auto user_thread_wrapper(void*) -> void {
+  userMain();
+  finished = true;
 }
 
 auto Kernel::run() -> void {
-  println("Main start.");
-
-  thread::Scheduler::ready_queue = new struc::List<thread::TCB*>();
+  init();
 
   thread_t kernel_thread;
-
   thread::create_thread(&kernel_thread, nullptr, nullptr);
-  thread::Scheduler::running_thread = kernel_thread;
 
-  Thread thread1(&thread_function1, nullptr);
-  WorkerB thread2;
+  thread::Scheduler::init(kernel_thread);
 
-  thread1.start();
-  thread2.start();
+  Thread user_thread(&user_thread_wrapper, nullptr);
+  user_thread.start();
 
-  while (finished1 == false || finished2 == false) {
-    Thread::dispatch();
+  while (!finished) {
+    thread_dispatch();
   }
 
-  println("Main done.");
+  shutdown();
+}
 
-  delete thread::Scheduler::ready_queue;
+auto Kernel::force_shutdown() -> void {
+  shutdown();
+}
+
+auto Kernel::init() -> void {
+  auto trap_vector_base_pointer = reinterpret_cast<uint64>(&trap_vector_base) | direct_mode;
+  __asm__ volatile("csrw stvec, %0" : : "r"(trap_vector_base_pointer));
+  MemoryAllocator::init();
+}
+
+void Kernel::shutdown() {
+  thread::Scheduler::destructor();
+  __asm__ volatile ("li t0, 0x5555");
+  __asm__ volatile ("li t1, 0x100000");
+  __asm__ volatile ("sw t0, 0(t1)");
 }
