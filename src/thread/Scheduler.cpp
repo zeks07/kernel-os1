@@ -19,8 +19,8 @@ auto kernel::thread::Scheduler::get_thread() -> TCB* {
 }
 
 auto kernel::thread::Scheduler::dispatch() -> void {
-  TCB* old_thread = running_thread;
-  if (!old_thread->is_finished()) {
+  const auto old_thread = running_thread;
+  if (old_thread->is_ready()) {
     put_thread(old_thread);
   }
   running_thread = get_thread();

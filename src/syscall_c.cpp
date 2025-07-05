@@ -33,3 +33,44 @@ auto thread_exit() -> int {
 auto thread_dispatch() -> void {
   syscall(0x13);
 }
+
+auto sem_open(sem_t* handle, const unsigned init) -> int {
+  return static_cast<int>(syscall(
+    0x21,
+    reinterpret_cast<uint64>(handle),
+    init
+  ));
+}
+
+auto sem_close(sem_t handle) -> int {
+  return static_cast<int>(syscall(
+    0x22,
+    reinterpret_cast<uint64>(handle)
+  ));
+}
+
+auto sem_wait(sem_t id) -> int {
+  return static_cast<int>(syscall(
+    0x23,
+    reinterpret_cast<uint64>(id)
+  ));
+}
+
+auto sem_signal(sem_t id) -> int {
+  return static_cast<int>(syscall(
+    0x24,
+    reinterpret_cast<uint64>(id)
+  ));
+}
+
+auto sem_timedwait(sem_t id, time_t timeout) -> int {
+  return 0;
+}
+
+auto sem_trywait(sem_t id) -> int {
+  return 0;
+}
+
+int time_sleep(time_t timeout) {
+  return 0;
+}

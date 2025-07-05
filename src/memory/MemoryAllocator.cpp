@@ -20,7 +20,7 @@ auto kernel::MemoryAllocator::init() -> void {
 }
 
 auto kernel::MemoryAllocator::mem_alloc(const size_t size) -> void* {
-  const uint64 number_of_blocks = (size + BLOCK_HEADER_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
+  const auto number_of_blocks = (size + BLOCK_HEADER_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
   if (!block_header_list_head || number_of_blocks <= 0) {
     return nullptr;
   }

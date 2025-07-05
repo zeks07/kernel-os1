@@ -5,6 +5,11 @@
 .extern _ZN6kernel6thread11exit_threadEv                        # kernel::thread::exit_thread()
 .extern _ZN6kernel6thread9Scheduler8dispatchEv                  # kernel::thread::Scheduler::dispatch()
 
+.extern _ZN6kernel4sync14open_semaphoreEPPNS0_9SemaphoreEj      # kernel::sync::open_semaphore(kernel::sync::Semaphore**, unsigned int)
+.extern _ZN6kernel4sync9Semaphore5closeEv                       # kernel::sync::Semaphore::close()
+.extern _ZN6kernel4sync9Semaphore4waitEv                        # kernel::sync::Semaphore::wait()
+.extern _ZN6kernel4sync9Semaphore6signalEv                      # kernel::sync::Semaphore::signal()
+
 .extern _ZN7Console6handleEv                                    # Console::handle()
 
 .extern _Z5errorv                                               # error()
@@ -66,6 +71,33 @@ syscall_dispatch:
     li t0, 0x13
     beq a0, t0, thread_dispatch
 
+    li t0, 0x21
+    beq a0, t0, sem_open
+
+    li t0, 0x22
+    beq a0, t0, sem_close
+
+    li t0, 0x23
+    beq a0, t0, sem_wait
+
+    li t0, 0x24
+    beq a0, t0, sem_signal
+
+    li t0, 0x25
+    beq a0, t0, sem_timedwait
+
+    li t0, 0x26
+    beq a0, t0, sem_trywait
+
+    li t0, 0x31
+    beq a0, t0, time_sleep
+
+    li t0, 0x41
+    beq a0, t0, getc
+
+    li t0, 0x42
+    beq a0, t0, putc
+
     j invalid_operator_code
 
 mem_alloc:
@@ -79,8 +111,8 @@ mem_free:
     j syscall_done
 
 thread_create:
-    mv a0, a1   # PCB** handle
-    mv a1, a2   # void (* body_)(void *)
+    mv a0, a1   # kernel::thread::TCB** handle
+    mv a1, a2   # void (* body)(void *)
     mv a2, a3   # void* arg
     call _ZN6kernel6thread13create_threadEPPNS0_3TCBEPFvPvES4_
     j syscall_done
@@ -91,6 +123,42 @@ thread_exit:
 
 thread_dispatch:
     call _ZN6kernel6thread9Scheduler8dispatchEv
+    j syscall_done
+
+sem_open:
+    mv a0, a1   # kernel::sync::Semaphore** handle
+    mv a1, a2   # unsigned int init
+    call _ZN6kernel4sync14open_semaphoreEPPNS0_9SemaphoreEj
+    j syscall_done
+
+sem_close:
+    mv a0, a1   # this
+    call _ZN6kernel4sync9Semaphore5closeEv
+    j syscall_done
+
+sem_wait:
+    mv a0, a1   #this
+    call _ZN6kernel4sync9Semaphore4waitEv
+    j syscall_done
+
+sem_signal:
+    mv a0, a1   #this
+    call _ZN6kernel4sync9Semaphore6signalEv
+    j syscall_done
+
+sem_timedwait:
+    j syscall_done
+
+sem_trywait:
+    j syscall_done
+
+time_sleep:
+    j syscall_done
+
+getc:
+    j syscall_done
+
+putc:
     j syscall_done
 
 invalid_operator_code:

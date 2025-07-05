@@ -76,6 +76,22 @@ auto kernel::thread::TCB::is_finished() const -> bool {
   return state == Finished;
 }
 
+auto kernel::thread::TCB::block() -> void {
+  state = Waiting;
+}
+
+auto kernel::thread::TCB::unblock() -> void {
+  state = Ready;
+}
+
+auto kernel::thread::TCB::is_blocked() const -> bool {
+  return state == Waiting;
+}
+
+auto kernel::thread::TCB::is_ready() const -> bool {
+  return state == Ready;
+}
+
 auto kernel::thread::TCB::run() const -> void {
   thread_body(thread_arguments);
 }

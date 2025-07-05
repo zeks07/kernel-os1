@@ -15,9 +15,9 @@ namespace kernel::thread {
   auto switch_context(TCB* new_thread, TCB* old_thread) -> void;;
 
   class TCB {
-  public:
-    enum State { Ready, Running, Waiting, Finished };
+    enum State { Ready, Waiting, Finished };
 
+  public:
     struct Context {
       uint64 ra;
       uint64 sp;
@@ -32,8 +32,13 @@ namespace kernel::thread {
 
     auto get_id() const -> int;
     auto get_state() const -> State;
+
     auto finish() -> void;
     auto is_finished() const -> bool;
+    auto block() -> void;
+    auto unblock() -> void;
+    auto is_blocked() const -> bool;
+    auto is_ready() const -> bool;
 
     auto run() const -> void;
 
@@ -47,7 +52,7 @@ namespace kernel::thread {
     body thread_body;
     void* thread_arguments;
 
-    Context context;
+    Context context{};
     size_t stack_size;
     void* stack;
   };
