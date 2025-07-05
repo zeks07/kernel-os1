@@ -46,5 +46,5 @@ auto error() -> void {
   }
   println(")");
 
-  Kernel::force_shutdown();
+  kernel::Kernel::force_shutdown();
 }

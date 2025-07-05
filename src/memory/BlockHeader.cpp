@@ -1,6 +1,6 @@
 #include "../../h/memory/BlockHeader.hpp"
 
-auto new_block_header_at(void* ptr, const size_t size, const bool used) -> BlockHeader* {
+auto kernel::new_block_header_at(void* ptr, const size_t size, const bool used) -> BlockHeader* {
   const auto block_header = static_cast<BlockHeader*>(ptr);
   block_header->size = size;
   block_header->is_used = used;
@@ -9,7 +9,7 @@ auto new_block_header_at(void* ptr, const size_t size, const bool used) -> Block
   return block_header;
 }
 
-auto BlockHeader::link_to(BlockHeader* next) -> void {
+auto kernel::BlockHeader::link_to(BlockHeader* next) -> void {
   next->previous = this;
   next->next = this->next;
   if (this->next) {
@@ -18,7 +18,7 @@ auto BlockHeader::link_to(BlockHeader* next) -> void {
   this->next = next;
 }
 
-auto BlockHeader::free() -> void {
+auto kernel::BlockHeader::free() -> void {
   is_used = false;
 
   if (next && !next->is_used) {

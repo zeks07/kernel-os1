@@ -3,7 +3,7 @@
 
 class Kernel;
 
-namespace thread {
+namespace kernel::thread {
   class TCB;
 
   class Scheduler {
@@ -22,5 +22,4 @@ namespace thread {
     static struc::List<TCB*>* ready_queue;
     static TCB* running_thread;
   };
-
 }

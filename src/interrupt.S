@@ -1,13 +1,13 @@
-.extern _ZN15MemoryAllocator9mem_allocEm                # MemoryAllocator::mem_alloc(size_t)
-.extern _ZN15MemoryAllocator8mem_freeEPv                # MemoryAllocator::mem_free(void*)
+.extern _ZN6kernel15MemoryAllocator9mem_allocEm                 # kernel::MemoryAllocator::mem_alloc(size_t)
+.extern _ZN6kernel15MemoryAllocator8mem_freeEPv                 # kernel::MemoryAllocator::mem_free(void*)
 
-.extern _ZN6thread13create_threadEPPNS_3TCBEPFvPvES3_   # thread::create_thread(thread::TCB**, void (*)(void*), void*)
-.extern _ZN6thread11exit_threadEv                       # thread::exit_thread()
-.extern _ZN6thread9Scheduler8dispatchEv                 # thread::Scheduler::dispatch()
+.extern _ZN6kernel6thread13create_threadEPPNS0_3TCBEPFvPvES4_   # kernel::thread::create_thread(thread::TCB**, void (*)(void*), void*)
+.extern _ZN6kernel6thread11exit_threadEv                        # kernel::thread::exit_thread()
+.extern _ZN6kernel6thread9Scheduler8dispatchEv                  # kernel::thread::Scheduler::dispatch()
 
-.extern _ZN7Console6handleEv                            # Console::handle()
+.extern _ZN7Console6handleEv                                    # Console::handle()
 
-.extern _Z5errorv                                       # error()
+.extern _Z5errorv                                               # error()
 
 .global trap_vector_base
 .type trap_vector_base @function
@@ -70,27 +70,27 @@ syscall_dispatch:
 
 mem_alloc:
     mv a0, a1   # size_t size
-    call _ZN15MemoryAllocator9mem_allocEm
+    call _ZN6kernel15MemoryAllocator9mem_allocEm
     j syscall_done
 
 mem_free:
     mv a0, a1   # void* ptr
-    call _ZN15MemoryAllocator8mem_freeEPv
+    call _ZN6kernel15MemoryAllocator8mem_freeEPv
     j syscall_done
 
 thread_create:
     mv a0, a1   # PCB** handle
     mv a1, a2   # void (* body_)(void *)
     mv a2, a3   # void* arg
-    call _ZN6thread13create_threadEPPNS_3TCBEPFvPvES3_
+    call _ZN6kernel6thread13create_threadEPPNS0_3TCBEPFvPvES4_
     j syscall_done
 
 thread_exit:
-    call _ZN6thread11exit_threadEv
+    call _ZN6kernel6thread11exit_threadEv
     j syscall_done
 
 thread_dispatch:
-    call _ZN6thread9Scheduler8dispatchEv
+    call _ZN6kernel6thread9Scheduler8dispatchEv
     j syscall_done
 
 invalid_operator_code:

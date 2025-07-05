@@ -1,6 +1,6 @@
 #pragma once
 
-
+namespace kernel {
 class Kernel {
 public:
   static auto run() -> void;
@@ -10,3 +10,4 @@ private:
   static void init();
   static void shutdown();
 };
+} // namespace kernel

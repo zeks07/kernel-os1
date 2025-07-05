@@ -9,7 +9,7 @@ auto pop_spp_spie() -> void {
 }
 
 // ReSharper disable once CppDFAConstantFunctionResult
-auto thread::create_thread(TCB** handle, const body body, void* arg) -> int {
+auto kernel::thread::create_thread(TCB** handle, const body body, void* arg) -> int {
   static int id = 0;
 
   const auto new_thread = new TCB(id++, body, arg, DEFAULT_STACK_SIZE);
@@ -27,22 +27,22 @@ auto thread::create_thread(TCB** handle, const body body, void* arg) -> int {
   return 0;
 }
 
-auto thread::exit_thread() -> void {
+auto kernel::thread::exit_thread() -> void {
   TCB* running_thread = Scheduler::get_running_thread();
   running_thread->finish();
   thread_dispatch();
 }
 
-auto thread::thread_wrapper() -> void {
+auto kernel::thread::thread_wrapper() -> void {
   pop_spp_spie();
 
-  const TCB* running_thread = Scheduler::get_running_thread();
+  const TCB *running_thread = Scheduler::get_running_thread();
   running_thread->run();
 
   thread_exit();
 }
 
-thread::TCB::TCB(const int id, const body body, void* arg, const size_t stack_size)
+kernel::thread::TCB::TCB(const int id, const body body, void* arg, const size_t stack_size)
   : id(id), state(Ready), thread_body(body), thread_arguments(arg) {
 
   if (body == nullptr) {
@@ -60,27 +60,26 @@ thread::TCB::TCB(const int id, const body body, void* arg, const size_t stack_si
   };
 }
 
-auto thread::TCB::get_id() const -> int {
+auto kernel::thread::TCB::get_id() const -> int {
   return id;
 }
 
-auto thread::TCB::get_state() const -> State {
+auto kernel::thread::TCB::get_state() const -> State {
   return state;
 }
 
-auto thread::TCB::finish() -> void {
+auto kernel::thread::TCB::finish() -> void {
   state = Finished;
 }
 
-auto thread::TCB::is_finished() const -> bool {
+auto kernel::thread::TCB::is_finished() const -> bool {
   return state == Finished;
 }
 
-auto thread::TCB::run() const -> void {
+auto kernel::thread::TCB::run() const -> void {
   thread_body(thread_arguments);
 }
 
-thread::TCB::
-~TCB() {
+kernel::thread::TCB::~TCB() {
   mem_free(stack);
 }

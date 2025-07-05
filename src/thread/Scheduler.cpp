@@ -2,23 +2,23 @@
 
 #include "../../h/thread/TCB.hpp"
 
-auto thread::Scheduler::init(TCB* kernel_thread) -> void {
+auto kernel::thread::Scheduler::init(TCB* kernel_thread) -> void {
   ready_queue = new struc::List<TCB*>();
   running_thread = kernel_thread;
 }
 
-auto thread::Scheduler::put_thread(TCB* thread) -> void {
+auto kernel::thread::Scheduler::put_thread(TCB* thread) -> void {
   ready_queue->add(thread);
 }
 
-auto thread::Scheduler::get_thread() -> TCB* {
+auto kernel::thread::Scheduler::get_thread() -> TCB* {
   if (ready_queue->is_empty()) {
     return nullptr;
   }
   return ready_queue->remove_first();
 }
 
-auto thread::Scheduler::dispatch() -> void {
+auto kernel::thread::Scheduler::dispatch() -> void {
   TCB* old_thread = running_thread;
   if (!old_thread->is_finished()) {
     put_thread(old_thread);
@@ -27,13 +27,13 @@ auto thread::Scheduler::dispatch() -> void {
   switch_context(old_thread, running_thread);
 }
 
-auto thread::Scheduler::get_running_thread() -> TCB* {
+auto kernel::thread::Scheduler::get_running_thread() -> TCB* {
   return running_thread;
 }
 
-auto thread::Scheduler::destructor() -> void {
+auto kernel::thread::Scheduler::destructor() -> void {
   delete ready_queue;
 }
 
-struc::List<thread::TCB*>* thread::Scheduler::ready_queue;
-thread::TCB* thread::Scheduler::running_thread = nullptr;
+struc::List<kernel::thread::TCB*>* kernel::thread::Scheduler::ready_queue;
+kernel::thread::TCB* kernel::thread::Scheduler::running_thread = nullptr;

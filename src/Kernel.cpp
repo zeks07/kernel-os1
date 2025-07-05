@@ -20,7 +20,7 @@ auto user_thread_wrapper(void*) -> void {
   finished = true;
 }
 
-auto Kernel::run() -> void {
+auto kernel::Kernel::run() -> void {
   init();
 
   thread_t kernel_thread;
@@ -38,17 +38,17 @@ auto Kernel::run() -> void {
   shutdown();
 }
 
-auto Kernel::force_shutdown() -> void {
+auto kernel::Kernel::force_shutdown() -> void {
   shutdown();
 }
 
-auto Kernel::init() -> void {
+auto kernel::Kernel::init() -> void {
   auto trap_vector_base_pointer = reinterpret_cast<uint64>(&trap_vector_base) | direct_mode;
   __asm__ volatile("csrw stvec, %0" : : "r"(trap_vector_base_pointer));
   MemoryAllocator::init();
 }
 
-void Kernel::shutdown() {
+void kernel::Kernel::shutdown() {
   thread::Scheduler::destructor();
   __asm__ volatile ("li t0, 0x5555");
   __asm__ volatile ("li t1, 0x100000");

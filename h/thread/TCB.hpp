@@ -2,7 +2,7 @@
 
 #include "../../lib/hw.h"
 
-namespace thread {
+namespace kernel::thread {
   class TCB;
 
   using body = void (*)(void*);
@@ -53,4 +53,4 @@ namespace thread {
   };
 }
 
-using _thread = thread::TCB;
+using _thread = kernel::thread::TCB;

@@ -6,7 +6,11 @@
 #include "../../h/memory/BlockHeader.hpp"
 
 
-auto MemoryAllocator::init() -> void {
+namespace {
+  constexpr size_t BLOCK_HEADER_SIZE = 32;
+}
+
+auto kernel::MemoryAllocator::init() -> void {
   heap_start = const_cast<void*>(HEAP_START_ADDR);
   heap_end = const_cast<void*>(HEAP_END_ADDR);
 
@@ -15,7 +19,7 @@ auto MemoryAllocator::init() -> void {
   block_header_list_head = new_block_header_at(heap_start, heap_size);
 }
 
-auto MemoryAllocator::mem_alloc(const size_t size) -> void* {
+auto kernel::MemoryAllocator::mem_alloc(const size_t size) -> void* {
   const uint64 number_of_blocks = (size + BLOCK_HEADER_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
   if (!block_header_list_head || number_of_blocks <= 0) {
     return nullptr;
@@ -45,7 +49,7 @@ auto MemoryAllocator::mem_alloc(const size_t size) -> void* {
   return reinterpret_cast<char*>(current) + BLOCK_HEADER_SIZE;
 }
 
-auto MemoryAllocator::mem_free(void* ptr) -> int {
+auto kernel::MemoryAllocator::mem_free(void* ptr) -> int {
   if (!ptr) {
     return -1;
   }
@@ -56,7 +60,7 @@ auto MemoryAllocator::mem_free(void* ptr) -> int {
   return 0;
 }
 
-auto MemoryAllocator::print_memory_usage() -> void {
+auto kernel::MemoryAllocator::print_memory_usage() -> void {
   println("Total memory size: %d (%x) B", heap_size, heap_size);
   println("---------");
 
@@ -75,7 +79,7 @@ auto MemoryAllocator::print_memory_usage() -> void {
   }
 }
 
-void* MemoryAllocator::heap_start;
-void* MemoryAllocator::heap_end;
-BlockHeader* MemoryAllocator::block_header_list_head;
-uint64 MemoryAllocator::heap_size;
+void* kernel::MemoryAllocator::heap_start;
+void* kernel::MemoryAllocator::heap_end;
+kernel::BlockHeader* kernel::MemoryAllocator::block_header_list_head;
+uint64 kernel::MemoryAllocator::heap_size;

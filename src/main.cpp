@@ -2,5 +2,5 @@
 
 
 auto main() -> void {
-  Kernel::run();
+  kernel::Kernel::run();
 }
