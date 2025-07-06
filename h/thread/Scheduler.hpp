@@ -19,7 +19,7 @@ namespace kernel::thread {
     static auto destructor() -> void;
 
   private:
-    static struc::List<TCB*>* ready_queue;
+    static util::List<TCB*>* ready_queue;
     static TCB* running_thread;
   };
 }

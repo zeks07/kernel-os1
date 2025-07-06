@@ -80,8 +80,11 @@ auto kernel::thread::TCB::block() -> void {
   state = Waiting;
 }
 
-auto kernel::thread::TCB::unblock() -> void {
+
+auto kernel::thread::TCB::wake(const WakeReason reason) -> void {
   state = Ready;
+  wake_reason = reason;
+  Scheduler::put_thread(this);
 }
 
 auto kernel::thread::TCB::is_blocked() const -> bool {

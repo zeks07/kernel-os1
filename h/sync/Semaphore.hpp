@@ -9,8 +9,6 @@ namespace kernel::thread {
 namespace kernel::sync {
   class Semaphore;
 
-  using time_t = unsigned long;
-
   auto open_semaphore(Semaphore** handle, unsigned init) -> int;
 
   class Semaphore {
@@ -33,7 +31,7 @@ namespace kernel::sync {
     auto wake_first() -> void;
 
     long value;
-    struc::List<thread::TCB*> wait_queue;
+    util::List<thread::TCB*> wait_queue;
     State state;
   };
 }

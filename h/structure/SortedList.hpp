@@ -1,75 +1,64 @@
 #pragma once
 
-#include "LinkedNode.hpp"
 #include "../print/print.hpp"
+#include "LinkedNode.hpp"
+#include "Pair.hpp"
 
 
 auto error() -> void;
 
 namespace util {
-  template <typename T>
-  class List {
+
+  template <typename Key>
+  auto compare(const Key a, const Key b) -> bool {
+    return a < b;
+  }
+
+  template <typename T, typename Key, auto (* compare)(Key, Key) -> bool = compare>
+  class SortedList {
   public:
-    List() : front(nullptr), back(nullptr), size(0) {
+    SortedList() : front(nullptr), back(nullptr), size(0) {
     }
 
-    List(const List& other) : front(nullptr), back(nullptr), size(0) {
+    SortedList(const SortedList& other) : front(nullptr), back(nullptr), size(0) {
       auto current = other.front;
       while (current) {
-        add(current->get_value());
+        add(current->get_value().first, current->get_value().second);
         current = current->next_node();
       }
     }
 
-    auto operator=(const List& other) -> List& {
+    auto operator=(const SortedList& other) -> SortedList& {
       if (this == &other) return *this;
 
       clear();
 
       auto current = other.front;
       while (current) {
-        add(current->get_value());
+        add(current->get_value().first, current->get_value().second);
         current = current->next_node();
       }
 
       return *this;
     }
 
-    auto add(const T& element) -> void {
-      const auto new_node = new LinkedNode<T>(element);
+    auto add(const T& element, const Key& key) -> void {
+      const auto new_node = new LinkedNode<Pair<T, Key>>(Pair<T, Key>(element, key));
       if (is_empty()) {
         front = back = new_node;
       } else {
-        new_node->link_after(back);
-        back = new_node;
+        auto position = get_position(key);
+        if (position) {
+          new_node->link_before(position);
+          if (position == front) {
+            front = new_node;
+          }
+        } else {
+          new_node->link_after(back);
+          back = new_node;
+        }
       }
       size++;
-    }
-
-    auto add(const int index, T& element) -> void {
-      if (index < 0 || index > size) {
-        println("ERROR: Index out of bounds; Program will continue without inserting a new element.");
-        return;
-      }
-
-      if (index == size) {
-        add(element);
-        return;
-      }
-
-      const auto new_node = new LinkedNode<T>(element);
-      auto current = front;
-
-      for (auto i = 0; i < index; i++) {
-        current = current->next_node();
-      }
-      new_node->link_before(current);
-      if (index == 0) front = new_node;
-      size++;
-    }
-
-    auto add_first(const T& element) -> void {
-      add(0, element);
     }
 
     auto operator[](const int index) const -> T& {
@@ -87,7 +76,21 @@ namespace util {
         current = current->next_node();
       }
 
-      return current->get_value();
+      return current->get_value().get_first();
+    }
+
+    auto get_key(const int index) const -> Key& {
+      if (index < 0 || index >= size) {
+        println("ERROR: Index out of bounds.");
+        error();
+      }
+
+      auto current = front;
+      for (auto i = 0; i < index; i++) {
+        current = current->next_node();
+      }
+
+      return current->get_value().get_second();
     }
 
     auto first() const -> T& {
@@ -109,7 +112,7 @@ namespace util {
         current = current->next_node();
       }
 
-      auto removed = current->get_value();
+      auto removed = current->get_value().get_first();
 
       if (current == front) front = current->next_node();
       if (current == back) back = current->previous_node();
@@ -144,13 +147,26 @@ namespace util {
       }
     }
 
-    ~List() {
+    ~SortedList() {
       clear();
     }
 
   private:
-    LinkedNode<T>* front;
-    LinkedNode<T>* back;
+    using sorted_list_node = LinkedNode<Pair<T, Key>>*;
+
+    auto get_position(const Key& key) -> sorted_list_node {
+      auto current = front;
+      while (current) {
+        if (compare(key, current->get_value().get_second())) {
+          return current;
+        }
+        current = current->next_node();
+      }
+      return nullptr;
+    }
+    
+    sorted_list_node front;
+    sorted_list_node back;
     int size;
   };
 }

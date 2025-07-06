@@ -12,7 +12,11 @@ namespace kernel::thread {
 
   auto thread_wrapper() -> void;
 
-  auto switch_context(TCB* new_thread, TCB* old_thread) -> void;;
+  auto switch_context(TCB* new_thread, TCB* old_thread) -> void;
+
+  enum class WakeReason {
+    Signal, Timeout
+  };
 
   class TCB {
     enum State { Ready, Waiting, Finished };
@@ -25,18 +29,13 @@ namespace kernel::thread {
 
     TCB(int id, body body, void* arg, size_t stack_size);
 
-    // ReSharper disable once CppFunctionIsNotImplemented
-    auto save_context() -> void;
-    // ReSharper disable once CppFunctionIsNotImplemented
-    auto load_context() -> void;
-
     auto get_id() const -> int;
     auto get_state() const -> State;
 
     auto finish() -> void;
     auto is_finished() const -> bool;
     auto block() -> void;
-    auto unblock() -> void;
+    auto wake(WakeReason reason) -> void;
     auto is_blocked() const -> bool;
     auto is_ready() const -> bool;
 
@@ -55,6 +54,8 @@ namespace kernel::thread {
     Context context{};
     size_t stack_size;
     void* stack;
+
+    WakeReason wake_reason;
   };
 }
 

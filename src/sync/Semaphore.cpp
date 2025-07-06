@@ -63,7 +63,6 @@ auto kernel::sync::Semaphore::is_closed() const -> bool {
 auto kernel::sync::Semaphore::wake_first() -> void {
   const auto unblocked = wait_queue.remove_first();
   if (unblocked) {
-    unblocked->unblock();
-    thread::Scheduler::put_thread(unblocked);
+    unblocked->wake(thread::WakeReason::Signal);
   }
 }

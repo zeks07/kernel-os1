@@ -1,21 +1,28 @@
-.extern _ZN6kernel15MemoryAllocator9mem_allocEm                 # kernel::MemoryAllocator::mem_alloc(size_t)
-.extern _ZN6kernel15MemoryAllocator8mem_freeEPv                 # kernel::MemoryAllocator::mem_free(void*)
+# 1 "src/interrupt.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/riscv64-linux-gnu/include/stdc-predef.h" 1 3
+# 32 "<command-line>" 2
+# 1 "src/interrupt.S"
+.extern _ZN6kernel15MemoryAllocator9mem_allocEm # kernel::MemoryAllocator::mem_alloc(size_t)
+.extern _ZN6kernel15MemoryAllocator8mem_freeEPv # kernel::MemoryAllocator::mem_free(void*)
 
-.extern _ZN6kernel6thread13create_threadEPPNS0_3TCBEPFvPvES4_   # kernel::thread::create_thread(thread::TCB**, void (*)(void*), void*)
-.extern _ZN6kernel6thread11exit_threadEv                        # kernel::thread::exit_thread()
-.extern _ZN6kernel6thread9Scheduler8dispatchEv                  # kernel::thread::Scheduler::dispatch()
+.extern _ZN6kernel6thread13create_threadEPPNS0_3TCBEPFvPvES4_ # kernel::thread::create_thread(thread::TCB**, void (*)(void*), void*)
+.extern _ZN6kernel6thread11exit_threadEv # kernel::thread::exit_thread()
+.extern _ZN6kernel6thread9Scheduler8dispatchEv # kernel::thread::Scheduler::dispatch()
 
-.extern _ZN6kernel4sync14open_semaphoreEPPNS0_9SemaphoreEj      # kernel::sync::open_semaphore(kernel::sync::Semaphore**, unsigned int)
-.extern _ZN6kernel4sync9Semaphore5closeEv                       # kernel::sync::Semaphore::close()
-.extern _ZN6kernel4sync9Semaphore4waitEv                        # kernel::sync::Semaphore::wait()
-.extern _ZN6kernel4sync9Semaphore6signalEv                      # kernel::sync::Semaphore::signal()
+.extern _ZN6kernel4sync14open_semaphoreEPPNS0_9SemaphoreEj # kernel::sync::open_semaphore(kernel::sync::Semaphore**, unsigned int)
+.extern _ZN6kernel4sync9Semaphore5closeEv # kernel::sync::Semaphore::close()
+.extern _ZN6kernel4sync9Semaphore4waitEv # kernel::sync::Semaphore::wait()
+.extern _ZN6kernel4sync9Semaphore6signalEv # kernel::sync::Semaphore::signal()
 
-.extern _ZN6kernel4time5Timer10time_sleepEm                     # kernel::time::Timer::time_sleep(unsigned long)
+.extern _ZN6kernel4time5Timer10time_sleepEm # kernel::time::Timer::time_sleep(unsigned long)
 
-.extern _ZN7Console6handleEv                                    # Console::handle()
+.extern _ZN7Console6handleEv # Console::handle()
 
-.extern _ZN6kernel4time5Timer4tickEv                            # kernel:time:Timer::tick()
-.extern _Z5errorv                                               # error()
+.extern _ZN6kernel4time5Timer4tickEv # kernel:time:Timer::tick()
+.extern _Z5errorv # error()
 
 .global trap_vector_base
 .type trap_vector_base @function
@@ -104,19 +111,19 @@ syscall_dispatch:
     j invalid_operator_code
 
 mem_alloc:
-    mv a0, a1   # size_t size
+    mv a0, a1 # size_t size
     call _ZN6kernel15MemoryAllocator9mem_allocEm
     j syscall_done
 
 mem_free:
-    mv a0, a1   # void* ptr
+    mv a0, a1 # void* ptr
     call _ZN6kernel15MemoryAllocator8mem_freeEPv
     j syscall_done
 
 thread_create:
-    mv a0, a1   # kernel::thread::TCB** handle
-    mv a1, a2   # void (* body)(void *)
-    mv a2, a3   # void* arg
+    mv a0, a1 # kernel::thread::TCB** handle
+    mv a1, a2 # void (* body)(void *)
+    mv a2, a3 # void* arg
     call _ZN6kernel6thread13create_threadEPPNS0_3TCBEPFvPvES4_
     j syscall_done
 
@@ -129,23 +136,23 @@ thread_dispatch:
     j syscall_done
 
 sem_open:
-    mv a0, a1   # kernel::sync::Semaphore** handle
-    mv a1, a2   # unsigned int init
+    mv a0, a1 # kernel::sync::Semaphore** handle
+    mv a1, a2 # unsigned int init
     call _ZN6kernel4sync14open_semaphoreEPPNS0_9SemaphoreEj
     j syscall_done
 
 sem_close:
-    mv a0, a1   # this
+    mv a0, a1 # this
     call _ZN6kernel4sync9Semaphore5closeEv
     j syscall_done
 
 sem_wait:
-    mv a0, a1   #this
+    mv a0, a1 #this
     call _ZN6kernel4sync9Semaphore4waitEv
     j syscall_done
 
 sem_signal:
-    mv a0, a1   #this
+    mv a0, a1 #this
     call _ZN6kernel4sync9Semaphore6signalEv
     j syscall_done
 
@@ -156,7 +163,7 @@ sem_trywait:
     j syscall_done
 
 time_sleep:
-    mv a0, a1   # unsigned long timeout
+    mv a0, a1 # unsigned long timeout
     call _ZN6kernel4time5Timer10time_sleepEm
     li a0, 1
     j syscall_done

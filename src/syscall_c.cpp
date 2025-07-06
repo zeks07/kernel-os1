@@ -14,7 +14,10 @@ auto mem_alloc(const size_t size) -> void* {
 }
 
 auto mem_free(void* ptr) -> int {
-  return static_cast<int>(syscall(0x02, reinterpret_cast<uint64>(ptr)));
+  return static_cast<int>(syscall(
+    0x02,
+    reinterpret_cast<uint64>(ptr)
+  ));
 }
 
 auto thread_create(thread_t* handle, void (*start_routine)(void*), void* arg) -> int {
@@ -71,6 +74,6 @@ auto sem_trywait(sem_t id) -> int {
   return 0;
 }
 
-int time_sleep(time_t timeout) {
-  return 0;
+auto time_sleep(const time_t timeout) -> int {
+  return static_cast<int>(syscall(0x31, timeout));
 }
