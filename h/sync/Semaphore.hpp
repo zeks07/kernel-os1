@@ -1,4 +1,5 @@
 #pragma once
+#include "../../lib/hw.h"
 #include "../structure/List.hpp"
 
 
@@ -15,8 +16,9 @@ namespace kernel::sync {
   public:
     explicit Semaphore(unsigned init);
 
-    auto wait() -> void;
-    auto signal() -> void;
+    auto wait() -> int;
+    auto try_wait() -> int;
+    auto signal() -> int;
 
   private:
     enum State {

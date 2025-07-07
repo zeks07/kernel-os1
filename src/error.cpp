@@ -12,12 +12,12 @@ auto error() -> void {
   __asm__ volatile ("csrr %[status], sstatus":[status]"=r"(status));
   __asm__ volatile ("csrr %[cause], scause":[cause]"=r"(cause));
 
-  bool in_system_mode = (status & 1 << 8) == 1 << 8;
-  bool masked_interrupts = (status & 1 << 1) == 1 << 1;
-  bool previous_interrupt_enabled = (status & 1 << 5) == 1 << 5;
+  auto in_system_mode = (status & 1 << 8) == 1 << 8;
+  auto masked_interrupts = (status & 1 << 1) == 1 << 1;
+  auto previous_interrupt_enabled = (status & 1 << 5) == 1 << 5;
 
-  bool is_interrupt = (cause & 1 << 31) == static_cast<uint64>(1) << 31;
-  uint64 interrupt_code = cause & 0x7FFFFFFF;
+  auto is_interrupt = (cause & 1 << 31) == static_cast<uint64>(1) << 31;
+  auto interrupt_code = cause & 0x7FFFFFFF;
 
   println("Status: %s", in_system_mode ? "System" : "User");
   println("Interrupts: %s", masked_interrupts ? "Masked" : "Unmasked");

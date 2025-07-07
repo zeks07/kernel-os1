@@ -66,12 +66,19 @@ auto sem_signal(sem_t id) -> int {
   ));
 }
 
-auto sem_timedwait(sem_t id, time_t timeout) -> int {
-  return 0;
+auto sem_timedwait(sem_t id, const time_t timeout) -> int {
+  return static_cast<int>(syscall(
+    0x25,
+    reinterpret_cast<uint64>(id),
+    timeout
+  ));
 }
 
 auto sem_trywait(sem_t id) -> int {
-  return 0;
+  return static_cast<int>(syscall(
+    0x26,
+    reinterpret_cast<uint64>(id)
+  ));
 }
 
 auto time_sleep(const time_t timeout) -> int {

@@ -15,7 +15,7 @@ namespace kernel::thread {
   auto switch_context(TCB* new_thread, TCB* old_thread) -> void;
 
   enum class WakeReason {
-    Signal, Timeout
+    None, Signal, Timeout
   };
 
   class TCB {
@@ -32,12 +32,14 @@ namespace kernel::thread {
     auto get_id() const -> int;
     auto get_state() const -> State;
 
+    auto is_ready() const -> bool;
     auto finish() -> void;
     auto is_finished() const -> bool;
     auto block() -> void;
-    auto wake(WakeReason reason) -> void;
     auto is_blocked() const -> bool;
-    auto is_ready() const -> bool;
+
+    auto wake(WakeReason reason) -> void;
+    auto get_wake_reason() const -> WakeReason;
 
     auto run() const -> void;
 
@@ -55,7 +57,7 @@ namespace kernel::thread {
     size_t stack_size;
     void* stack;
 
-    WakeReason wake_reason;
+    WakeReason wake_reason = WakeReason::None;
   };
 }
 

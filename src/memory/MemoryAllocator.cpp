@@ -64,8 +64,8 @@ auto kernel::MemoryAllocator::print_memory_usage() -> void {
   println("Total memory size: %d (%x) B", heap_size, heap_size);
   println("---------");
 
-  BlockHeader* current = block_header_list_head;
-  for (int i = 0; current; ++i) {
+  auto current = block_header_list_head;
+  for (auto i = 0; current; ++i) {
     const auto address = reinterpret_cast<long>(current) - reinterpret_cast<long>(heap_start);
     const auto previous = current->previous ? reinterpret_cast<long>(current->previous) - reinterpret_cast<long>(heap_start) : -1;
     const auto next = current->next ? reinterpret_cast<long>(current->next) - reinterpret_cast<long>(heap_start) : -1;

@@ -1,10 +1,12 @@
 #pragma once
 
-
 #include "../lib/hw.h"
 #include "sync/Semaphore.hpp"
 #include "thread/TCB.hpp"
 
+
+using ::_thread;
+using ::_sem;
 
 using thread_t = _thread*;
 using sem_t = _sem*;

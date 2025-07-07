@@ -9,6 +9,7 @@
 .extern _ZN6kernel4sync9Semaphore5closeEv                       # kernel::sync::Semaphore::close()
 .extern _ZN6kernel4sync9Semaphore4waitEv                        # kernel::sync::Semaphore::wait()
 .extern _ZN6kernel4sync9Semaphore6signalEv                      # kernel::sync::Semaphore::signal()
+.extern _ZN6kernel4sync9Semaphore8try_waitEv                    # kernel::sync::Semaphore::try_wait()
 
 .extern _ZN6kernel4time5Timer10time_sleepEm                     # kernel::time::Timer::time_sleep(unsigned long)
 
@@ -153,6 +154,8 @@ sem_timedwait:
     j syscall_done
 
 sem_trywait:
+    mv a0, a1   # this
+    call _ZN6kernel4sync9Semaphore8try_waitEv
     j syscall_done
 
 time_sleep:
@@ -182,6 +185,8 @@ handle_timer:
 
 console:
     call _ZN7Console6handleEv
+    li t0, 0x2
+    csrc sip, t0
     j exit_trap
 
 illegal_instructions:

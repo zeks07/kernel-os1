@@ -10,7 +10,7 @@ auto pop_spp_spie() -> void {
 
 // ReSharper disable once CppDFAConstantFunctionResult
 auto kernel::thread::create_thread(TCB** handle, const body body, void* arg) -> int {
-  static int id = 0;
+  static auto id = 0;
 
   const auto new_thread = new TCB(id++, body, arg, DEFAULT_STACK_SIZE);
   // ReSharper disable once CppDFAConstantConditions
@@ -28,7 +28,7 @@ auto kernel::thread::create_thread(TCB** handle, const body body, void* arg) -> 
 }
 
 auto kernel::thread::exit_thread() -> void {
-  TCB* running_thread = Scheduler::get_running_thread();
+  const auto running_thread = Scheduler::get_running_thread();
   running_thread->finish();
   thread_dispatch();
 }
