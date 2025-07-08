@@ -31,3 +31,27 @@ Thread::Thread()
     }),
     my_arg(this) {
 }
+
+Semaphore::Semaphore(const unsigned init) : my_handle(nullptr) {
+  sem_open(&my_handle, init);
+}
+
+Semaphore::~Semaphore() {
+  sem_close(my_handle);
+}
+
+int Semaphore::wait() const {
+  return sem_wait(my_handle);
+}
+
+int Semaphore::signal() const {
+  return sem_signal(my_handle);
+}
+
+int Semaphore::timedWait(const time_t timeout) const {
+  return sem_timedwait(my_handle, timeout);
+}
+
+int Semaphore::tryWait() const {
+  return sem_trywait(my_handle);
+}

@@ -20,14 +20,13 @@ auto kernel::thread::Scheduler::get_thread() -> TCB* {
 }
 
 auto kernel::thread::Scheduler::dispatch() -> void {
-  Kernel::disable_interrupts();
   const auto old_thread = running_thread;
   if (old_thread->is_ready()) {
     put_thread(old_thread);
   }
   running_thread = get_thread();
   switch_context(old_thread, running_thread);
-  Kernel::enable_interrupts();
+  time_since_last_dispatch = 0;
 }
 
 auto kernel::thread::Scheduler::get_running_thread() -> TCB* {
@@ -38,5 +37,16 @@ auto kernel::thread::Scheduler::destructor() -> void {
   delete ready_queue;
 }
 
+auto kernel::thread::Scheduler::tick() -> void {
+  time_since_last_dispatch++;
+  if (time_since_last_dispatch >= 10) {
+    uint64 sepc;
+    __asm__ volatile ("csrr %0, sepc" : "=r"(sepc));
+    dispatch();
+    __asm__ volatile ("csrw sepc, %0" :: "r"(sepc));
+  }
+}
+
 util::List<kernel::thread::TCB*>* kernel::thread::Scheduler::ready_queue;
 kernel::thread::TCB* kernel::thread::Scheduler::running_thread = nullptr;
+time_t kernel::thread::Scheduler::time_since_last_dispatch = 0;

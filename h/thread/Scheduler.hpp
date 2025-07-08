@@ -1,4 +1,5 @@
 #pragma once
+#include "../../lib/hw.h"
 #include "../structure/List.hpp"
 
 class Kernel;
@@ -17,9 +18,11 @@ namespace kernel::thread {
     static auto get_running_thread() -> TCB*;
 
     static auto destructor() -> void;
+    static auto tick() -> void;
 
   private:
     static util::List<TCB*>* ready_queue;
     static TCB* running_thread;
+    static time_t time_since_last_dispatch;
   };
 }

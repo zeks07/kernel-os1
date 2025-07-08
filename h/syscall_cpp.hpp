@@ -27,13 +27,13 @@ private:
 
 class Semaphore {
 public:
-  Semaphore(unsigned init = 1);
+  explicit Semaphore(unsigned init = 1);
   virtual ~Semaphore();
 
-  int wait();
-  int signal();
-  int timedWait(time_t timeout);
-  int tryWait();
+  int wait() const;
+  int signal() const;
+  int timedWait(time_t timeout) const;
+  int tryWait() const;
 
 private:
   sem_t my_handle;

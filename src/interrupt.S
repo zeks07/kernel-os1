@@ -151,6 +151,8 @@ sem_signal:
     j syscall_done
 
 sem_timedwait:
+    # temporarely disabled
+    call _Z5errorv
     j syscall_done
 
 sem_trywait:
@@ -159,6 +161,8 @@ sem_trywait:
     j syscall_done
 
 time_sleep:
+    # temporarely disabled
+    call _Z5errorv
     mv a0, a1   # unsigned long timeout
     call _ZN6kernel4time5Timer10time_sleepEm
     li a0, 1
@@ -178,15 +182,13 @@ syscall_done:
     j exit_trap
 
 handle_timer:
-    call _ZN6kernel4time5Timer4tickEv
+    // call _ZN6kernel4time5Timer4tickEv
     li t0, 0x2
     csrc sip, t0
     j exit_trap
 
 console:
     call _ZN7Console6handleEv
-    li t0, 0x2
-    csrc sip, t0
     j exit_trap
 
 illegal_instructions:

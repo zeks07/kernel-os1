@@ -20,9 +20,10 @@ auto kernel::time::Timer::time_sleep(const time_t timeout) -> void {
 }
 
 auto kernel::time::Timer::tick() -> void {
+  println("a");
   Kernel::disable_interrupts();
   time++;
-  while (!sleep_queue->is_empty() && sleep_queue->get_key(0) == time) {
+  while (!sleep_queue->is_empty() && sleep_queue->get_key(0) >= time) {
     sleep_queue->remove_first()->wake(thread::WakeReason::Timeout);
   }
   Kernel::enable_interrupts();

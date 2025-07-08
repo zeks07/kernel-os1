@@ -13,7 +13,7 @@ extern "C" {
 auto print_(const long& value, const int base, const int sign) -> void {
   constexpr char digits[] = "0123456789ABCDEF";
   char buffer[32];
-  int neg = 0;
+  auto neg = 0;
   uint x;
   if (sign && value < 0) {
     neg = 1;
@@ -21,7 +21,7 @@ auto print_(const long& value, const int base, const int sign) -> void {
   } else {
     x = value;
   }
-  int i = 0;
+  auto i = 0;
   do {
     buffer[i++] = digits[x % base];
   } while ((x /= base) > 0);
@@ -37,13 +37,13 @@ auto print_(const char* string) -> void {
 
 auto specifier(const char specifier, const va_list& args) -> void {
   if (specifier == 'd') {
-    const int value = va_arg(args, int);
+    const auto value = va_arg(args, int);
     print_(value, 10, 1);
   } else if (specifier == 'u') {
-    const int value = va_arg(args, int);
+    const auto value = va_arg(args, int);
     print_(value, 10, 0);
   } else if (specifier == 'x') {
-    const int value = va_arg(args, int);
+    const auto value = va_arg(args, int);
     print_(value, 16, 0);
   } else if (specifier == 's') {
     const char* value = va_arg(args, char*);
@@ -61,7 +61,7 @@ auto print(const char* format, ...) -> void {
   va_list args;
   va_start(args, format);
 
-  for (const char* c = format; *c; ++c) {
+  for (auto c = format; *c; ++c) {
     if (*c == '%') {
       ++c;
       specifier(*c, args);
@@ -70,7 +70,6 @@ auto print(const char* format, ...) -> void {
       __putc(*c);
     }
   }
-
   va_end(args);
 }
 
