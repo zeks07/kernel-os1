@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
 #include "../h/memory/BlockHeader.hpp"
 
@@ -83,4 +83,12 @@ auto sem_trywait(sem_t id) -> int {
 
 auto time_sleep(const time_t timeout) -> int {
   return static_cast<int>(syscall(0x31, timeout));
+}
+
+auto getc() -> char {
+  return static_cast<char>(syscall(0x41));
+}
+
+auto putc(const char character) -> void {
+  syscall(0x42, character);
 }

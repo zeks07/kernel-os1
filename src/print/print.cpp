@@ -11,7 +11,6 @@ extern "C" {
 }
 
 auto print_(const long& value, const int base, const int sign) -> void {
-  constexpr char digits[] = "0123456789ABCDEF";
   char buffer[32];
   auto neg = 0;
   uint x;
@@ -23,6 +22,7 @@ auto print_(const long& value, const int base, const int sign) -> void {
   }
   auto i = 0;
   do {
+    constexpr char digits[] = "0123456789ABCDEF";
     buffer[i++] = digits[x % base];
   } while ((x /= base) > 0);
 

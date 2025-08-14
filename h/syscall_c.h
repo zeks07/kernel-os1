@@ -30,3 +30,8 @@ auto sem_trywait(sem_t id) -> int;
  * 1 time_t = 100 milliseconds
  */
 auto time_sleep(time_t timeout) -> int;
+
+constexpr auto EOF = -1;
+
+auto getc() -> char;
+auto putc(char character) -> void;

@@ -1,7 +1,7 @@
 #include "../../h/time/Timer.hpp"
 
 #include "../../h/Kernel.hpp"
-#include "../../h/syscall_c.hpp"
+#include "../../h/syscall_c.h"
 #include "../../h/thread/Scheduler.hpp"
 #include "../../h/thread/TCB.hpp"
 

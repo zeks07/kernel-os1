@@ -13,7 +13,9 @@
 
 .extern _ZN6kernel4time5Timer10time_sleepEm                     # kernel::time::Timer::time_sleep(unsigned long)
 
-.extern _ZN7Console6handleEv                                    # Console::handle()
+.extern _ZN6kernel7console7Console6handleEv                     # kernel::console::Console::handle()
+.extern _ZN6kernel7console7Console4getcEv                       # kernel::console::Console::getc()
+.extern _ZN6kernel7console7Console4putcEc                       # kernel::console::Console::putc(char)
 
 .extern _ZN6kernel4time5Timer4tickEv                            # kernel:time:Timer::tick()
 .extern _Z5errorv                                               # error()
@@ -169,9 +171,11 @@ time_sleep:
     j syscall_done
 
 getc:
+    call _ZN6kernel7console7Console4getcEv
     j syscall_done
 
 putc:
+    call _ZN6kernel7console7Console4putcEc
     j syscall_done
 
 invalid_operator_code:
@@ -188,7 +192,7 @@ handle_timer:
     j exit_trap
 
 console:
-    call _ZN7Console6handleEv
+    call _ZN6kernel7console7Console6handleEv
     j exit_trap
 
 illegal_instructions:

@@ -1,5 +1,7 @@
 #include "../h/syscall_cpp.hpp"
 
+#include "../lib/console.h"
+
 auto operator new(const size_t size) -> void* {
   return mem_alloc(size);
 }
@@ -22,6 +24,10 @@ int Thread::start() {
 
 void Thread::dispatch() {
   thread_dispatch();
+}
+
+int Thread::sleep(const time_t timeout) {
+  return time_sleep(timeout);
 }
 
 Thread::Thread()
@@ -54,4 +60,12 @@ int Semaphore::timedWait(const time_t timeout) const {
 
 int Semaphore::tryWait() const {
   return sem_trywait(my_handle);
+}
+
+char Console::getc() {
+  return __getc();
+}
+
+void Console::putc(const char character) {
+  __putc(character);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "syscall_c.hpp"
+#include "syscall_c.h"
 
 auto operator new(size_t size) -> void*;
 auto operator delete(void* ptr) -> void;
@@ -13,7 +13,7 @@ public:
   int start();
 
   static void dispatch();
-  // static int sleep(time_t);
+  static int sleep(time_t);
 
 protected:
   Thread();
@@ -37,4 +37,10 @@ public:
 
 private:
   sem_t my_handle;
+};
+
+class Console final {
+public:
+  static char getc();
+  static void putc(char character);
 };

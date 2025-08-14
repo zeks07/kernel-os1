@@ -1,6 +1,6 @@
 #include "../../h/thread/TCB.hpp"
 
-#include "../../h/syscall_c.hpp"
+#include "../../h/syscall_c.h"
 #include "../../h/thread/Scheduler.hpp"
 
 auto pop_spp_spie() -> void {

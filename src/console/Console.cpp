@@ -4,8 +4,16 @@
 #include "../../lib/console.h"
 
 
-void Console::handle() {
-  kernel::Kernel::disable_interrupts();
+void kernel::console::Console::handle() {
+  Kernel::disable_interrupts();
   console_handler();
-  kernel::Kernel::enable_interrupts();
+  Kernel::enable_interrupts();
+}
+
+auto kernel::console::Console::getc() -> char {
+  return __getc();
+}
+
+auto kernel::console::Console::putc(const char chr) -> void {
+  __putc(chr);
 }
