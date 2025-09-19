@@ -22,6 +22,10 @@ static void workerBodyA(void* arg) {
             for (uint64 k = 0; k < 30000; k++) { /* busy wait */ }
             thread_dispatch();
         }
+        if (i == 5) {
+            const auto space = mem_get_free_space();
+            println("space = %dkB", space);
+        }
     }
     printString("A finished!\n");
     finishedA = true;
@@ -62,7 +66,7 @@ static void workerBodyC(void* arg) {
         printString("C: i="); printInt(i); printString("\n");
     }
 
-    printString("A finished!\n");
+    printString("D finished!\n");
     finishedC = true;
     thread_dispatch();
 }

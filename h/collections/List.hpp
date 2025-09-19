@@ -1,14 +1,14 @@
 #pragma once
 
+#include "Collection.hpp"
 #include "LinkedNode.hpp"
-#include "../print/print.hpp"
+#include "../kernel.hpp"
+#include "../print.hpp"
 
 
-auto error() -> void;
-
-namespace util {
+namespace collection {
   template <typename T>
-  class List {
+  class List final : public Collection<T> {
   public:
     List() : front(nullptr), back(nullptr), size(0) {
     }
@@ -38,7 +38,7 @@ namespace util {
     /**
      * Adds [element] at the end of the list.
      */
-    auto add(const T& element) -> void {
+    auto add(const T& element) -> void override {
       const auto new_node = new LinkedNode<T>(element);
       if (is_empty()) {
         front = back = new_node;
@@ -52,7 +52,7 @@ namespace util {
     /**
      * Adds [element] at the given [index] in the list.
      */
-    auto add(const int index, T& element) -> void {
+    auto add(const int index, T& element) -> void override {
       if (index < 0 || index > size) {
         println("ERROR: Index out of bounds; Program will continue without inserting a new element.");
         return;
@@ -84,18 +84,15 @@ namespace util {
     /**
      * Returns the element at the given [index].
      */
-    auto operator[](const int index) const -> T& {
+    auto operator[](const int index) const -> T& override {
       return get(index);
     }
 
     /**
      * Returns the element at the given [index].
      */
-    auto get(const int index) const -> T& {
-      if (index < 0 || index >= size) {
-        println("ERROR: Index out of bounds.");
-        error();
-      }
+    auto get(const int index) const -> T& override {
+      if (index < 0 || index >= size) kernel::throw_error("ERROR: Index out of bounds.");
 
       auto current = front;
       for (auto i = 0; i < index; i++) {
@@ -122,11 +119,8 @@ namespace util {
     /**
      * Removes and returns the element at the specified [index] in the list.
      */
-    auto remove_at(const int index) -> T {
-      if (index < 0 || index >= size) {
-        println("ERROR: Index out of bounds.");
-        error();
-      }
+    auto remove_at(const int index) -> T override {
+      if (index < 0 || index >= size) kernel::throw_error("ERROR: Index out of bounds.");
 
       auto current = front;
       for (auto i = 0; i < index; i++) {
@@ -163,27 +157,27 @@ namespace util {
     /**
      * Returns the length of the list.
      */
-    auto length() const -> int {
+    auto length() const -> int override {
       return size;
     }
 
     /**
      * Return true if the list is empty.
      */
-    auto is_empty() const -> bool {
+    auto is_empty() const -> bool override {
       return size == 0;
     }
 
     /**
      * Removes all elements from the list.
      */
-    auto clear() -> void {
+    auto clear() -> void  override {
       while (!is_empty()) {
         remove_first();
       }
     }
 
-    ~List() {
+    ~List() override {
       clear();
     }
 

@@ -1,16 +1,24 @@
 #include "../h/syscall_cpp.hpp"
 
-#include "../lib/console.h"
+#include "../h/syscall_c.h"
 
 auto operator new(const size_t size) -> void* {
   return mem_alloc(size);
 }
 
-auto operator delete(void* ptr) -> void {
-  mem_free(ptr);
+auto operator new [](const size_t size) -> void* {
+  return mem_alloc(size);
 }
 
-Thread::Thread(void (*body)(void*), void* arg)
+auto operator delete(void* pointer) noexcept-> void {
+  mem_free(pointer);
+}
+
+auto operator delete [](void* pointer) noexcept -> void {
+  mem_free(pointer);
+}
+
+Thread::Thread(void(* body)(void*), void* arg)
   : my_handle(nullptr), my_body(body), my_arg(arg) {
 }
 
@@ -18,16 +26,16 @@ Thread::~Thread() {
   delete my_handle;
 }
 
-int Thread::start() {
+auto Thread::start() -> int {
   return thread_create(&my_handle, my_body, my_arg);
 }
 
-void Thread::dispatch() {
+auto Thread::dispatch() -> void {
   thread_dispatch();
 }
 
-int Thread::sleep(const time_t timeout) {
-  return time_sleep(timeout);
+auto Thread::sleep(time_t) -> int {
+  return -1;
 }
 
 Thread::Thread()
@@ -38,6 +46,26 @@ Thread::Thread()
     my_arg(this) {
 }
 
+auto Thread::run() -> void {
+}
+
+auto PeriodicThread::terminate() -> void {
+  period = 0;
+}
+
+PeriodicThread::PeriodicThread(const time_t period) : period(period) {
+}
+
+auto PeriodicThread::periodicActivation() -> void {
+}
+
+auto PeriodicThread::run() -> void {
+  while (period > 0) {
+    time_sleep(period);
+    periodicActivation();
+  }
+}
+
 Semaphore::Semaphore(const unsigned init) : my_handle(nullptr) {
   sem_open(&my_handle, init);
 }
@@ -46,26 +74,18 @@ Semaphore::~Semaphore() {
   sem_close(my_handle);
 }
 
-int Semaphore::wait() const {
+auto Semaphore::wait() const -> int {
   return sem_wait(my_handle);
 }
 
-int Semaphore::signal() const {
+auto Semaphore::signal() const -> int {
   return sem_signal(my_handle);
 }
 
-int Semaphore::timedWait(const time_t timeout) const {
-  return sem_timedwait(my_handle, timeout);
+auto Console::getc() -> char {
+  return ::getc();
 }
 
-int Semaphore::tryWait() const {
-  return sem_trywait(my_handle);
-}
-
-char Console::getc() {
-  return __getc();
-}
-
-void Console::putc(const char character) {
-  __putc(character);
+auto Console::putc(const char chr) -> void {
+  ::putc(chr);
 }

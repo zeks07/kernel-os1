@@ -1,6 +1,5 @@
-#include "../h/Kernel.hpp"
-
+#include "../h/kernel.hpp"
 
 auto main() -> void {
-  kernel::Kernel::run();
+  kernel::run();
 }

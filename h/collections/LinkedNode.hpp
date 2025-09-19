@@ -3,9 +3,9 @@
 #include "Node.hpp"
 
 
-namespace util {
+namespace collection {
   template <typename T>
-  class LinkedNode : public Node<T> {
+  class LinkedNode final : public Node<T> {
   public:
     explicit LinkedNode(const T& value) : Node<T>(value), next(nullptr), previous(nullptr) {
     }

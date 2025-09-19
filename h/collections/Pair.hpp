@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace util {
+namespace collection {
   template <typename First, typename Second>
   class Pair {
   public:

@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace util {
+namespace collection {
   template <typename T>
   class Node {
   public:

@@ -1,23 +1,27 @@
 #pragma once
 
 #include "syscall_c.h"
+#include "../lib/hw.h"
 
-auto operator new(size_t size) -> void*;
-auto operator delete(void* ptr) -> void;
+[[nodiscard]] auto operator new(size_t size) -> void*;
+[[nodiscard]] auto operator new [](size_t size) -> void*;
+auto operator delete(void* pointer) noexcept -> void;
+auto operator delete [](void* pointer) noexcept -> void;
+
 
 class Thread {
 public:
-  Thread(void (*body)(void*), void* arg);
+  Thread(void (* body)(void*), void* arg);
   virtual ~Thread();
 
-  int start();
+  auto start() -> int;
 
-  static void dispatch();
-  static int sleep(time_t);
+  static auto dispatch() -> void;
+  static auto sleep(time_t) -> int;
 
 protected:
   Thread();
-  virtual void run() {}
+  virtual auto run() -> void;
 
 private:
   thread_t my_handle;
@@ -25,22 +29,36 @@ private:
   void* my_arg;
 };
 
+
+class PeriodicThread : public Thread {
+public:
+  auto terminate() -> void;
+
+protected:
+  explicit PeriodicThread(time_t period);
+  virtual auto periodicActivation() -> void;
+
+private:
+  auto run() -> void final;
+  time_t period;
+};
+
+
 class Semaphore {
 public:
   explicit Semaphore(unsigned init = 1);
   virtual ~Semaphore();
 
-  int wait() const;
-  int signal() const;
-  int timedWait(time_t timeout) const;
-  int tryWait() const;
+  auto wait() const -> int;
+  auto signal() const -> int;
 
 private:
   sem_t my_handle;
 };
 
-class Console final {
+
+class Console {
 public:
-  static char getc();
-  static void putc(char character);
+  static auto getc() -> char;
+  static auto putc(char chr) -> void;
 };

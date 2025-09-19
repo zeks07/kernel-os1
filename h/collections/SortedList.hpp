@@ -1,21 +1,18 @@
 #pragma once
 
-#include "../print/print.hpp"
 #include "LinkedNode.hpp"
 #include "Pair.hpp"
+#include "../kernel.hpp"
 
 
-auto error() -> void;
-
-namespace util {
-
+namespace collection {
   template <typename Key>
-  auto compare(const Key a, const Key b) -> bool {
+  constexpr auto default_compare(const Key a, const Key b) -> bool {
     return a < b;
   }
 
-  template <typename T, typename Key, auto (* compare)(Key, Key) -> bool = compare>
-  class SortedList {
+  template <typename T, typename Key, auto (* compare)(Key, Key) -> bool = default_compare>
+  class SortedList final {
   public:
     SortedList() : front(nullptr), back(nullptr), size(0) {
     }
@@ -77,10 +74,7 @@ namespace util {
      * Returns the element at the given [index] in the list.
      */
     auto get(const int index) const -> T& {
-      if (index < 0 || index >= size) {
-        println("ERROR: Index out of bounds.");
-        error();
-      }
+      if (index < 0 || index >= size) kernel::throw_error("ERROR: Index out of bounds.");
 
       auto current = front;
       for (auto i = 0; i < index; i++) {
@@ -94,10 +88,7 @@ namespace util {
      * Returns the key associated with the element at the given [index] in the list.
      */
     auto get_key(const int index) const -> Key& {
-      if (index < 0 || index >= size) {
-        println("ERROR: Index out of bounds.");
-        error();
-      }
+      if (index < 0 || index >= size) kernel::throw_error("ERROR: Index out of bounds.");
 
       auto current = front;
       for (auto i = 0; i < index; i++) {
@@ -125,10 +116,7 @@ namespace util {
      * Removes and returns the element at the specified [index] in the list.
      */
     auto remove_at(const int index) -> T {
-      if (index < 0 || index >= size) {
-        println("ERROR: Index out of bounds.");
-        error();
-      }
+      if (index < 0 || index >= size) kernel::throw_error("ERROR: Index out of bounds.");
 
       auto current = front;
       for (auto i = 0; i < index; i++) {
